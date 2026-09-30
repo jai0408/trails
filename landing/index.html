@@ -1,0 +1,476 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Trails Landing Page</title>
+<meta name="description" content="Trails shows SaaS teams the exact onboarding step where trial users give up, and why.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a trail map. The hero shows an onboarding journey as a marked route with one flagged leak; the page follows that route top to bottom. */
+:root{
+  --bg:#F2F4F1; --surface:#FFFFFF; --ink:#16211C; --muted:#4B5A52; --line:#D3DBD5;
+  --pine:#1E5A43; --on-pine:#FFFFFF;
+  --blaze:#B93D0A; --blaze-soft:#FBE4D7; --pine-soft:#E1EEE7;
+  --contour:rgba(30,90,67,.075); --shadow:0 1px 2px rgba(22,33,28,.06),0 12px 32px -12px rgba(22,33,28,.18);
+  --f-display:"Bricolage Grotesque","Avenir Next","Segoe UI",system-ui,sans-serif;
+  --f-body:"IBM Plex Sans","Helvetica Neue",Arial,system-ui,sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
+  --wrap:1120px; --gutter:clamp(16px,4vw,32px); --radius:10px;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0E1512; --surface:#16201B; --ink:#E5ECE7; --muted:#A2B1A9; --line:#2A3831;
+  --pine:#62C49A; --on-pine:#0A130F; --blaze:#FF8B4E; --blaze-soft:#3A2218; --pine-soft:#1C3027;
+  --contour:rgba(98,196,154,.07); --shadow:0 1px 2px rgba(0,0,0,.3),0 12px 32px -12px rgba(0,0,0,.6);
+  color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0E1512; --surface:#16201B; --ink:#E5ECE7; --muted:#A2B1A9; --line:#2A3831;
+  --pine:#62C49A; --on-pine:#0A130F; --blaze:#FF8B4E; --blaze-soft:#3A2218; --pine-soft:#1C3027;
+  --contour:rgba(98,196,154,.07); --shadow:0 1px 2px rgba(0,0,0,.3),0 12px 32px -12px rgba(0,0,0,.6);
+  color-scheme:dark}
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:80px}
+body{background:var(--bg);color:var(--ink);font:400 1rem/1.6 var(--f-body);-webkit-font-smoothing:antialiased}
+h1,h2,h3{font-family:var(--f-display);line-height:1.08;letter-spacing:-.02em;text-wrap:balance;margin:0}
+p{margin:0}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--blaze);outline-offset:3px;border-radius:4px}
+.wrap{max-width:var(--wrap);margin-inline:auto;padding-inline:var(--gutter)}
+.eyebrow{font:500 .75rem/1 var(--f-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--pine)}
+.lede{color:var(--muted);font-size:1.0625rem;max-width:60ch}
+section{padding-block:clamp(56px,9vw,104px)}
+.sec-head{display:grid;gap:14px;margin-bottom:clamp(32px,5vw,52px);max-width:680px}
+.sec-head h2{font-size:clamp(1.75rem,4.2vw,2.625rem)}
+
+/* Buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.5em;min-height:48px;padding:.75em 1.25em;border-radius:8px;font:600 1rem/1.2 var(--f-body);text-decoration:none;border:1.5px solid transparent;transition:transform .15s,box-shadow .15s,background .15s}
+.btn-primary{background:var(--pine);color:var(--on-pine);box-shadow:0 6px 18px -8px var(--pine)}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 10px 24px -10px var(--pine)}
+.btn-ghost{border-color:var(--line);color:var(--ink);background:var(--surface)}
+.btn-ghost:hover{border-color:var(--ink)}
+.btn .arrow{transition:transform .15s}
+.btn:hover .arrow{transform:translateX(3px)}
+
+/* Placeholder marker for proof the owner must replace */
+.swap{display:inline-block;font:500 .6875rem/1 var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--blaze);border:1px dashed var(--blaze);border-radius:4px;padding:4px 6px;vertical-align:middle}
+
+/* Nav */
+.nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:saturate(1.4) blur(10px);-webkit-backdrop-filter:saturate(1.4) blur(10px);border-bottom:1px solid var(--line)}
+.nav .wrap{display:flex;align-items:center;gap:24px;min-height:64px}
+.logo{display:flex;align-items:center;gap:10px;font:800 1.25rem/1 var(--f-display);text-decoration:none;letter-spacing:-.02em}
+.logo svg{flex:none}
+.nav ul{display:none;list-style:none;margin:0 0 0 auto;padding:0;gap:28px}
+.nav ul a{text-decoration:none;color:var(--muted);font-weight:500;font-size:.9375rem}
+.nav ul a:hover{color:var(--ink)}
+.nav .btn{margin-left:auto;min-height:40px;padding:.55em 1em;font-size:.9375rem}
+@media (min-width:860px){.nav ul{display:flex}.nav .btn{margin-left:0}}
+
+/* Hero */
+.hero{position:relative;padding-block:clamp(40px,7vw,88px) clamp(56px,8vw,96px);overflow:hidden;
+  background-image:repeating-radial-gradient(ellipse 120% 90% at 85% 20%,transparent 0 26px,var(--contour) 27px 28px);}
+.hero .wrap{display:grid;gap:clamp(40px,6vw,64px);align-items:center}
+@media (min-width:980px){.hero .wrap{grid-template-columns:1.02fr 1fr}}
+.hero-copy{display:grid;gap:22px;min-width:0}
+.hero h1{font-size:clamp(2.375rem,6.6vw,4rem);font-weight:800}
+.hero h1 em{font-style:normal;color:var(--blaze);background:linear-gradient(transparent 70%,var(--blaze-soft) 70%)}
+.cta-row{display:flex;flex-wrap:wrap;gap:12px}
+.fine{font:400 .8125rem/1.5 var(--f-mono);color:var(--muted);display:flex;flex-wrap:wrap;gap:6px 16px}
+.fine span::before{content:"✓ ";color:var(--pine)}
+
+/* Product visual: journey map */
+.app{background:var(--surface);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);min-width:0;overflow:hidden}
+.app-bar{display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid var(--line);font:500 .75rem/1 var(--f-mono);color:var(--muted);flex-wrap:wrap}
+.app-bar b{color:var(--ink);font-weight:500}
+.app-bar .pill{margin-left:auto;background:var(--pine-soft);color:var(--pine);padding:5px 8px;border-radius:99px}
+.route{list-style:none;margin:0;padding:18px 16px 16px;display:grid;gap:4px;position:relative}
+.stop{display:grid;grid-template-columns:22px minmax(0,1fr) auto;gap:4px 12px;align-items:center;padding:8px 8px;border-radius:8px;position:relative}
+.stop .pin{width:14px;height:14px;border-radius:50%;border:3px solid var(--pine);background:var(--surface);justify-self:center;position:relative;z-index:1}
+.stop:not(:last-child) .pin::after{content:"";position:absolute;left:50%;top:14px;width:0;height:44px;border-left:2px dashed var(--line);transform:translateX(-50%)}
+.stop .name{font-weight:600;font-size:.9375rem;min-width:0}
+.stop .count{font:500 .8125rem/1 var(--f-mono);color:var(--muted);font-variant-numeric:tabular-nums;text-align:right}
+.stop .bar{grid-column:2/4;height:6px;border-radius:3px;background:var(--line);overflow:hidden}
+.stop .bar i{display:block;height:100%;background:var(--pine);border-radius:3px}
+.stop .delta{font:500 .75rem/1 var(--f-mono);color:var(--muted);font-variant-numeric:tabular-nums}
+.stop.leak{background:var(--blaze-soft);outline:1.5px solid var(--blaze)}
+.stop.leak .pin{border-color:var(--blaze);animation:ping 2.4s ease-out infinite}
+.stop.leak .bar i{background:var(--blaze)}
+.stop.leak .delta{color:var(--blaze);font-weight:600}
+.why{grid-column:2/4;display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.why span{font:500 .75rem/1.3 var(--f-mono);background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:5px 8px}
+.why strong{color:var(--blaze);font-weight:600}
+@keyframes ping{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--blaze) 55%,transparent)}70%,100%{box-shadow:0 0 0 10px transparent}}
+.app-foot{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:12px 16px;border-top:1px solid var(--line);font:500 .75rem/1.4 var(--f-mono);color:var(--muted)}
+.app-foot b{color:var(--ink)}
+
+/* Logo strip */
+.logos{padding-block:36px;border-block:1px solid var(--line);background:var(--surface)}
+.logos .wrap{display:grid;gap:18px;justify-items:center;text-align:center}
+.logos p{font-size:.875rem;color:var(--muted)}
+.logo-row{display:flex;flex-wrap:wrap;justify-content:center;gap:14px 40px;list-style:none;margin:0;padding:0}
+.logo-row li{font:700 1.125rem/1 var(--f-display);color:var(--muted);letter-spacing:-.01em;opacity:.85;display:flex;align-items:center;gap:8px}
+.logo-row li::before{content:"";width:14px;height:14px;border-radius:3px;background:currentColor;opacity:.55}
+.logo-row li:nth-child(2n)::before{border-radius:50%}
+.logo-row li:nth-child(3n)::before{transform:rotate(45deg)}
+
+/* Value props */
+.values{display:grid;gap:clamp(28px,4vw,48px)}
+@media (min-width:820px){.values{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.value{display:grid;gap:12px;align-content:start;padding-top:20px;border-top:2px solid var(--ink)}
+.value .stat{font:800 clamp(2rem,4vw,2.5rem)/1 var(--f-display);color:var(--pine);letter-spacing:-.03em}
+.value .stat small{font:500 .75rem/1 var(--f-mono);letter-spacing:.04em;color:var(--muted);margin-left:6px;text-transform:uppercase}
+.value h3{font-size:1.375rem}
+.value p{color:var(--muted)}
+
+/* How it works */
+.how{background:var(--surface);border-block:1px solid var(--line)}
+.steps{list-style:none;margin:0;padding:0;display:grid;gap:20px;counter-reset:step}
+@media (min-width:820px){.steps{grid-template-columns:repeat(3,minmax(0,1fr));gap:0}}
+.step{display:grid;gap:10px;align-content:start;padding:24px 24px 24px 0;position:relative;counter-increment:step}
+@media (min-width:820px){.step{padding:0 28px 0 0}.step+.step{padding-left:28px;border-left:1px dashed var(--line)}}
+.step .num{font:500 .75rem/1 var(--f-mono);color:var(--muted);letter-spacing:.08em}
+.step .num::before{content:"Step " counter(step) " · "}
+.step h3{font-size:1.25rem}
+.step p{color:var(--muted)}
+.step code{font:500 .8125rem/1.5 var(--f-mono);background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:8px 10px;display:block;overflow-x:auto;white-space:nowrap;color:var(--ink)}
+.step .time{font:500 .75rem/1 var(--f-mono);color:var(--pine)}
+
+/* Features */
+.features{display:grid;gap:1px;background:var(--line);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden}
+@media (min-width:640px){.features{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (min-width:980px){.features{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.feature{background:var(--surface);padding:26px 24px;display:grid;gap:10px;align-content:start}
+.feature svg{width:28px;height:28px;stroke:var(--pine);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.feature h3{font-size:1.125rem}
+.feature p{color:var(--muted);font-size:.9375rem}
+
+/* Testimonial */
+.quote{display:grid;gap:28px;max-width:880px}
+.quote blockquote{margin:0;font:700 clamp(1.5rem,3.6vw,2.25rem)/1.25 var(--f-display);letter-spacing:-.02em;text-wrap:balance}
+.quote blockquote mark{background:linear-gradient(transparent 62%,var(--blaze-soft) 62%);color:inherit}
+.quote figcaption{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.avatar{width:48px;height:48px;border-radius:50%;background:var(--pine-soft);color:var(--pine);display:grid;place-items:center;font:700 1rem var(--f-display)}
+.quote figcaption span{color:var(--muted);font-size:.9375rem}
+.quote figcaption b{display:block;color:var(--ink)}
+.result{display:flex;flex-wrap:wrap;gap:12px 32px;padding-top:20px;border-top:1px solid var(--line);font:500 .875rem/1.4 var(--f-mono);color:var(--muted)}
+.result b{display:block;font:800 1.75rem/1.1 var(--f-display);color:var(--ink);font-variant-numeric:tabular-nums}
+
+/* Pricing */
+.pricing{background:var(--surface);border-block:1px solid var(--line)}
+.plans{display:grid;gap:16px}
+@media (min-width:860px){.plans{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.plan{border:1px solid var(--line);border-radius:var(--radius);padding:26px 24px;display:grid;gap:14px;align-content:start;background:var(--bg)}
+.plan.pop{border:2px solid var(--pine);background:var(--surface);box-shadow:var(--shadow);position:relative}
+.plan .tag{position:absolute;top:-12px;left:22px;background:var(--pine);color:var(--on-pine);font:500 .6875rem/1 var(--f-mono);letter-spacing:.08em;text-transform:uppercase;padding:6px 8px;border-radius:4px}
+.plan h3{font-size:1.25rem}
+.price{font:800 2.25rem/1 var(--f-display);letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+.price small{font:400 .875rem var(--f-body);color:var(--muted);letter-spacing:0}
+.plan ul{list-style:none;margin:0;padding:0;display:grid;gap:8px;font-size:.9375rem;color:var(--muted)}
+.plan li::before{content:"→ ";color:var(--pine);font-family:var(--f-mono)}
+.plan .btn{width:100%}
+.price-note{margin-top:24px;color:var(--muted);font-size:.9375rem;text-align:center}
+
+/* FAQ */
+.faq-grid{display:grid;gap:32px}
+@media (min-width:900px){.faq-grid{grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);gap:64px}}
+.faq{border-top:1px solid var(--line)}
+.faq details{border-bottom:1px solid var(--line)}
+.faq summary{cursor:pointer;list-style:none;display:flex;justify-content:space-between;gap:16px;padding:20px 0;font-weight:600;font-size:1.0625rem}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:"+";font:400 1.5rem/1 var(--f-mono);color:var(--pine);transition:transform .2s}
+.faq details[open] summary::after{transform:rotate(45deg)}
+.faq details p{padding-bottom:20px;color:var(--muted);max-width:62ch}
+
+/* Closing CTA */
+.closing{padding-block:clamp(40px,7vw,80px)}
+.closing-card{background:var(--pine);color:var(--on-pine);border-radius:18px;padding:clamp(32px,6vw,64px);display:grid;gap:22px;justify-items:start;position:relative;overflow:hidden;
+  background-image:repeating-radial-gradient(ellipse 110% 80% at 100% 100%,transparent 0 24px,color-mix(in srgb,var(--on-pine) 9%,transparent) 25px 26px)}
+.closing-card h2{font-size:clamp(1.875rem,4.6vw,3rem);max-width:20ch}
+.closing-card p{max-width:52ch;opacity:.88;font-size:1.0625rem}
+.closing-card .btn-primary{background:var(--on-pine);color:var(--pine);box-shadow:none}
+.closing-card .fine{color:inherit;opacity:.85}
+.closing-card .fine span::before{color:inherit}
+
+.skip{position:absolute;left:16px;top:-60px;z-index:30;background:var(--ink);color:var(--bg);padding:10px 14px;border-radius:6px}
+.skip:focus{top:12px}
+footer{padding-block:32px 48px;border-top:1px solid var(--line);font-size:.875rem;color:var(--muted)}
+footer .wrap{display:flex;flex-wrap:wrap;gap:12px 28px;align-items:center}
+footer nav{display:flex;flex-wrap:wrap;gap:8px 20px;margin-left:auto}
+footer a{text-decoration:none}
+footer a:hover{color:var(--ink)}
+
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="nav">
+  <div class="wrap">
+    <a class="logo" href="#top" aria-label="Trails home">
+      <svg width="26" height="26" viewBox="0 0 26 26" aria-hidden="true"><path d="M4 21c4-1 3-7 8-8s4-7 10-8" fill="none" stroke="var(--pine)" stroke-width="2.4" stroke-linecap="round" stroke-dasharray="1 4.2"/><circle cx="22" cy="5" r="3" fill="var(--blaze)"/><circle cx="4" cy="21" r="2.4" fill="var(--pine)"/></svg>
+      Trails
+    </a>
+    <ul>
+      <li><a href="#how">How it works</a></li>
+      <li><a href="#features">Features</a></li>
+      <li><a href="#pricing">Pricing</a></li>
+      <li><a href="#faq">FAQ</a></li>
+    </ul>
+    <a class="btn btn-primary" href="#start">Start free trial</a>
+  </div>
+</header>
+
+<main id="main">
+  <!-- HERO -->
+  <section class="hero" id="top" aria-labelledby="hero-h">
+    <div class="wrap">
+      <div class="hero-copy">
+        <p class="eyebrow">Onboarding analytics for SaaS teams</p>
+        <h1 id="hero-h">See the exact step where trial users <em>give up</em>.</h1>
+        <p class="lede">Trails maps every path from sign-up to first value and flags the step that loses the most people. You see why they left, so your team fixes the right thing this sprint.</p>
+        <div class="cta-row">
+          <a class="btn btn-primary" href="#start">Find my biggest drop-off <span class="arrow" aria-hidden="true">→</span></a>
+          <a class="btn btn-ghost" href="#how">See how it works in 2 minutes</a>
+        </div>
+        <p class="fine"><span>14-day free trial</span><span>No credit card</span><span>One script tag</span></p>
+      </div>
+
+      <figure class="app" aria-label="Example Trails journey report showing a 41% drop-off at the Connect data step" style="margin:0">
+        <div class="app-bar"><b>Onboarding journey</b> · Last 30 days · 1,000 sign-ups <span class="pill">Example data</span></div>
+        <ol class="route">
+          <li class="stop"><span class="pin"></span><span class="name">Signed up</span><span class="count">1,000</span><span class="bar"><i style="width:100%"></i></span></li>
+          <li class="stop"><span class="pin"></span><span class="name">Verified email</span><span class="count">842 <span class="delta">−15.8%</span></span><span class="bar"><i style="width:84.2%"></i></span></li>
+          <li class="stop leak"><span class="pin"></span><span class="name">Connected data</span><span class="count">497 <span class="delta">−41.0%</span></span><span class="bar"><i style="width:49.7%"></i></span>
+            <span class="why"><span><strong>Biggest leak</strong></span><span>52% never opened the connector list</span><span>OAuth error · 61 users</span><span>Median stall 4m 12s</span></span>
+          </li>
+          <li class="stop"><span class="pin"></span><span class="name">Invited a teammate</span><span class="count">402 <span class="delta">−19.1%</span></span><span class="bar"><i style="width:40.2%"></i></span></li>
+          <li class="stop"><span class="pin"></span><span class="name">Viewed first report</span><span class="count">371 <span class="delta">−7.7%</span></span><span class="bar"><i style="width:37.1%"></i></span></li>
+        </ol>
+        <figcaption class="app-foot"><span>Activation <b>37.1%</b></span><span>Fixing the leak could add <b>~140 activated users / mo</b></span></figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- LOGOS -->
+  <section class="logos" aria-label="Customers">
+    <div class="wrap">
+      <p>Product and growth teams at 400+ B2B SaaS companies find their leaks with Trails <span class="swap">Placeholder</span></p>
+      <ul class="logo-row">
+        <li>Northwind</li><li>Parcelry</li><li>Lumen HR</li><li>Brightdesk</li><li>Quarry</li><li>Oakline</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- VALUE PROPS -->
+  <section aria-labelledby="val-h">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="eyebrow">Why teams switch</p>
+        <h2 id="val-h">Stop guessing which onboarding step to fix next.</h2>
+        <p class="lede">Funnels tell you that users left. Trails tells you where, why, and whether your fix brought them back.</p>
+      </div>
+      <div class="values">
+        <article class="value">
+          <p class="stat">1 day<small>to first answer</small></p>
+          <h3>Find the leak without building a funnel.</h3>
+          <p>Trails builds your journey map from real sessions and ranks every step by users lost. No event taxonomy, no analyst queue.</p>
+        </article>
+        <article class="value">
+          <p class="stat">3×<small>faster diagnosis</small></p>
+          <h3>Know why people left, not just where.</h3>
+          <p>Each drop-off comes with the errors, rage clicks and stall times behind it, so you walk into sprint planning with a cause.</p>
+        </article>
+        <article class="value">
+          <p class="stat">+11 pts<small>median activation lift</small></p>
+          <h3>Prove your fix worked.</h3>
+          <p>Mark the day you shipped. Trails compares before and after on that step and tells you when the lift is real, not noise.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section class="how" id="how" aria-labelledby="how-h">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="eyebrow">How it works</p>
+        <h2 id="how-h">From install to your first leak report in one afternoon.</h2>
+      </div>
+      <ol class="steps">
+        <li class="step">
+          <span class="num">10 minutes</span>
+          <h3>Add one line to your app.</h3>
+          <p>Paste the snippet, or switch on the Segment or RudderStack source you already run.</p>
+          <code>&lt;script src="https://cdn.trails.dev/t.js" data-key="pk_live_…"&gt;&lt;/script&gt;</code>
+        </li>
+        <li class="step">
+          <span class="num">2 minutes</span>
+          <h3>Tell Trails what “activated” means.</h3>
+          <p>Click the screen or event that marks first value, such as “viewed first report”. Trails works backward from there to map every route users take.</p>
+        </li>
+        <li class="step">
+          <span class="num">Every Monday</span>
+          <h3>Get your ranked leak report.</h3>
+          <p>One email and Slack post: the step losing the most users this week, the likely cause, and how many activations a fix is worth.</p>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- FEATURES -->
+  <section id="features" aria-labelledby="feat-h">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="eyebrow">Features</p>
+        <h2 id="feat-h">Everything you need to turn trials into active accounts.</h2>
+      </div>
+      <div class="features">
+        <article class="feature">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="19" r="2"/><circle cx="19" cy="5" r="2"/><path d="M7 18c5-1 3-7 8-8" stroke-dasharray="2 3"/></svg>
+          <h3>Auto-built journey map</h3>
+          <p>Every real path to activation, including the detours users take that your funnel never planned for.</p>
+        </article>
+        <article class="feature">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4M11 8v3M11 14h.01"/></svg>
+          <h3>Drop-off reasons</h3>
+          <p>JavaScript errors, failed API calls, rage clicks and idle time, grouped by the step where they happened.</p>
+        </article>
+        <article class="feature">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>
+          <h3>Cohort compare</h3>
+          <p>Split any step by plan, signup source, company size or device to see who struggles and who breezes through.</p>
+        </article>
+        <article class="feature">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 8a6 6 0 1 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10 21h4"/></svg>
+          <h3>Slack alerts on dips</h3>
+          <p>Get pinged when a step's conversion drops more than you'd expect, often the same day a release breaks it.</p>
+        </article>
+        <article class="feature">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg>
+          <h3>Fix tracking</h3>
+          <p>Before-and-after on every change you ship, with a clear call on whether the lift is statistically real.</p>
+        </article>
+        <article class="feature">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+          <h3>Private by default</h3>
+          <p>Form inputs are masked before they leave the browser. EU or US data hosting, and a DPA ready to sign.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- TESTIMONIAL -->
+  <section aria-label="Customer story" style="padding-top:0">
+    <div class="wrap">
+      <figure class="quote" style="margin:0">
+        <blockquote>“We'd argued about our onboarding for a year. Trails showed us in a day that <mark>41% of trials stalled on the data-connect screen</mark>. We added a sample dataset, and activation went from 18% to 29% in six weeks.”</blockquote>
+        <figcaption>
+          <span class="avatar" aria-hidden="true">CN</span>
+          <span><b>[Customer name]</b>Head of Growth, [Company] <span class="swap">Placeholder quote</span></span>
+        </figcaption>
+        <div class="result" aria-label="Results">
+          <span><b>18% → 29%</b>trial activation</span>
+          <span><b>6 weeks</b>from install to lift</span>
+          <span><b>1 change</b>shipped to get there</span>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- PRICING -->
+  <section class="pricing" id="pricing" aria-labelledby="price-h">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="eyebrow">Pricing</p>
+        <h2 id="price-h">Priced by the users you track, not the seats you add.</h2>
+        <p class="lede">Your whole team gets access on every plan. Every plan starts with a 14-day trial of Growth.</p>
+      </div>
+      <div class="plans">
+        <article class="plan">
+          <h3>Starter</h3>
+          <p class="price">$49<small> / month</small></p>
+          <ul><li>Up to 5,000 tracked users / mo</li><li>Journey map and weekly leak report</li><li>90 days of history</li></ul>
+          <a class="btn btn-ghost" href="#start">Start with Starter</a>
+        </article>
+        <article class="plan pop">
+          <span class="tag">Most teams pick this</span>
+          <h3>Growth</h3>
+          <p class="price">$199<small> / month</small></p>
+          <ul><li>Up to 50,000 tracked users / mo</li><li>Drop-off reasons and fix tracking</li><li>Slack alerts and cohort compare</li><li>12 months of history</li></ul>
+          <a class="btn btn-primary" href="#start">Find my biggest drop-off</a>
+        </article>
+        <article class="plan">
+          <h3>Scale</h3>
+          <p class="price">Custom</p>
+          <ul><li>Unlimited tracked users</li><li>SSO, audit log and data residency</li><li>Warehouse export to Snowflake or BigQuery</li></ul>
+          <a class="btn btn-ghost" href="#start">Talk to our team</a>
+        </article>
+      </div>
+      <p class="price-note">Save two months when you pay yearly. Nonprofits and early-stage startups get 50% off.</p>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section id="faq" aria-labelledby="faq-h">
+    <div class="wrap faq-grid">
+      <div class="sec-head" style="margin:0">
+        <p class="eyebrow">FAQ</p>
+        <h2 id="faq-h">Questions teams ask before they install.</h2>
+        <p class="lede">Something else on your mind? Email hello@trails.dev and a product person replies the same business day.</p>
+      </div>
+      <div class="faq">
+        <details open>
+          <summary>How long until I see my first drop-off?</summary>
+          <p>Most teams see a ranked journey map within a day of installing. You need roughly 200 sign-ups for the numbers to be dependable, so lower-volume products may take a week.</p>
+        </details>
+        <details>
+          <summary>We already use Mixpanel or Amplitude. Why add Trails?</summary>
+          <p>Those tools answer the questions you already know to ask. Trails finds the step you didn't know was broken and shows the errors and behavior behind it. Many customers keep both and send Trails data to their existing tools.</p>
+        </details>
+        <details>
+          <summary>Will the script slow down my app?</summary>
+          <p>The script is 14 KB gzipped, loads asynchronously and batches events, so it doesn't block rendering or your own API calls.</p>
+        </details>
+        <details>
+          <summary>Do I need an engineer to set it up?</summary>
+          <p>Only to paste one script tag, or not at all if you already run Segment or RudderStack. Everything after that is point-and-click.</p>
+        </details>
+        <details>
+          <summary>What happens to user data and privacy?</summary>
+          <p>Inputs and form fields are masked in the browser by default. You choose EU or US hosting, we sign a DPA on request, and you can delete any user's data with one API call.</p>
+        </details>
+        <details>
+          <summary>What happens when my trial ends?</summary>
+          <p>Nothing is charged unless you pick a plan. If you don't, your account pauses and keeps your data for 30 days in case you come back.</p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- CLOSING CTA -->
+  <section class="closing" id="start" aria-labelledby="close-h">
+    <div class="wrap">
+      <div class="closing-card">
+        <h2 id="close-h">Your next 100 trials are signing up this week. Find out where they'll stop.</h2>
+        <p>Install Trails today and get your first ranked leak report tomorrow morning. If it doesn't show you a step worth fixing within 14 days, you've lost nothing.</p>
+        <a class="btn btn-primary" href="#start">Find my biggest drop-off <span class="arrow" aria-hidden="true">→</span></a>
+        <p class="fine"><span>14-day free trial</span><span>No credit card</span><span>Cancel in two clicks</span></p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>© 2026 Trails Analytics</span>
+    <nav aria-label="Footer">
+      <a href="#features">Features</a><a href="#pricing">Pricing</a><a href="#faq">FAQ</a><a href="#top">Back to top</a>
+    </nav>
+  </div>
+</footer>
+</body>
+</html>
